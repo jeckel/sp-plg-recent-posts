@@ -4,8 +4,7 @@ Plugin Name: WP Recent Posts Shortcode
 */
 defined('ABSPATH') or die ('No script kiddies please!');
 
-$pluggin  = new WP_Recent_Posts_Shortcode();
-$pluggin->register();
+
 
 class WP_Recent_Posts_Shortcode
 {
@@ -82,4 +81,12 @@ class WP_Recent_Posts_Shortcode
             return get_the_post_thumbnail($post->ID, self::THUMB_SIZE_ALIAS);
         }
     }
+}
+
+// Start up this plugin
+add_action( 'init', 'RecentPostShortcode' );
+function RecentPostShortcode() {
+    global $RecentPostShortcode;
+    $RecentPostShortcode = new WP_Recent_Posts_Shortcode();
+    $RecentPostShortcode->register();
 }
