@@ -9,8 +9,10 @@ class WP_Recent_Posts_Shortcode
     const THUMB_SIZE_ALIAS = 'recent-post-thumb';
 
     protected $config = array(
-        'width' => 300,
-        'height' => 150,
+        'width'          => 300,
+        'height'         => 150,
+        'nb_posts'       => 3,
+        'excerpt_length' => 100
     );
 
     public function register()
@@ -34,16 +36,15 @@ class WP_Recent_Posts_Shortcode
         $posts = $this->loadRecentPosts();
         $toReturn = '';
         foreach($posts as $post) {
-            //var_dump($post);
             $toReturn .= $this->renderPost($post);
         }
-        return $toReturn;
+        return sprintf('<div class="row">%s</div>', $toReturn);
     }
 
     public function loadRecentPosts()
     {
         $args = array(
-            'numberposts' => 5,
+            'numberposts' => $this->config['nb_posts'],
             'offset'      => 0,
             'category'    => 0,
             'orderby'     => 'post_date',
@@ -56,13 +57,35 @@ class WP_Recent_Posts_Shortcode
 
     public function renderPost(WP_Post $post)
     {
+        $outputMask = '
+            <div class="col-md-4">
+                <div class="recent_post_thumb">
+                    <a href="%2$s">%1$s</a>
+                </div>
+                <h4>
+                    <a href="%2$s">%3$s</a>
+                </h4>
+                <div class="excerpt">%4$s <a href="%2$s">Read more...</a></div>
+            </div>';
         $output = sprintf(
-            '<div><div class="recent_post_thumb">%s</div><h1><a href="%s">%s</a></h1></div>',
+            $outputMask,
             $this->renderFeaturedImage($post),
             get_permalink($post),
-            $post->post_title
+            $post->post_title,
+            $this->getPostExcerpt($post)
         );
         return $output;
+    }
+
+    public function getPostExcerpt(WP_Post $post)
+    {
+        if (! empty($post->post_excerpt)) {
+            return $post_excerpt . ' [..]';
+        }
+
+        $content = strip_shortcodes($post->post_content);
+        $content = substr($content, 0, strpos($content, ' ', $this->config['excerpt_length'])) . ' [..]';
+        return $content;
     }
 
     public function renderFeaturedImage(WP_Post $post)
