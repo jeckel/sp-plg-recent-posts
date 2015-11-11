@@ -76,10 +76,17 @@ class WP_Recent_Posts_Shortcode
         $src = wp_get_attachment_image_src($image_id, self::THUMB_SIZE_ALIAS, false);
         if ($src[1] != $this->config['width'] || $src[2] != $this->config['height']) {
             // wrong size ==> need to regenerate the thumbnail
-            return "wrong image size";
-        } else {
-            return get_the_post_thumbnail($post->ID, self::THUMB_SIZE_ALIAS);
+            $this->regenerateThumbnails($image_id);
         }
+        return get_the_post_thumbnail($post->ID, self::THUMB_SIZE_ALIAS);
+    }
+
+    public function regenerateThumbnails($image_id)
+    {
+        require_once 'wp-admin/includes/image.php';
+        $fullsizepath = get_attached_file( $image_id);
+        $metadata =  wp_generate_attachment_metadata( $image_id, $fullsizepath);
+        wp_update_attachment_metadata($image_id, $metadata);
     }
 }
 
