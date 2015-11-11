@@ -4,8 +4,6 @@ Plugin Name: WP Recent Posts Shortcode
 */
 defined('ABSPATH') or die ('No script kiddies please!');
 
-
-
 class WP_Recent_Posts_Shortcode
 {
     const THUMB_SIZE_ALIAS = 'recent-post-thumb';
@@ -26,7 +24,7 @@ class WP_Recent_Posts_Shortcode
     }
 
     public function registerCustomImageSizes( $sizes ) {
-        return array_merge( $sizes, array(
+        return array_merge($sizes, array(
             self::THUMB_SIZE_ALIAS => __('Recent post thumbnails'),
         ));
     }
@@ -91,7 +89,7 @@ class WP_Recent_Posts_Shortcode
 }
 
 // Start up this plugin
-add_action( 'init', 'RecentPostShortcode' );
+add_action('init', 'RecentPostShortcode');
 function RecentPostShortcode() {
     global $RecentPostShortcode;
     $RecentPostShortcode = new WP_Recent_Posts_Shortcode();
