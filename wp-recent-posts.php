@@ -46,7 +46,7 @@ class WP_Recent_Posts_Shortcode
 
     public function adminPage()
     {
-        echo 'This is the page content';
+        include __dir__ . "/admin.php";
     }
 
     public function getRecentPosts()
