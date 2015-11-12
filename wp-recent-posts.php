@@ -27,13 +27,26 @@ class WP_Recent_Posts_Shortcode
         add_image_size(self::THUMB_SIZE_ALIAS, $this->config['width'], $this->config['height'], true);
         add_filter('image_size_names_choose', array($this, 'registerCustomImageSizes'));
 
+        add_action('admin_menu', array($this, 'adminAction'));
+
         add_shortcode('recent_posts', array($this, 'getRecentPosts'));
     }
 
-    public function registerCustomImageSizes( $sizes ) {
+    public function registerCustomImageSizes($sizes)
+    {
         return array_merge($sizes, array(
             self::THUMB_SIZE_ALIAS => __('Recent post thumbnails'),
         ));
+    }
+
+    public function adminAction()
+    {
+        add_options_page("WP Recent posts", "WP Recent posts", 'manage_options', "wp-recent-posts", array($this, 'adminPage'));
+    }
+
+    public function adminPage()
+    {
+        echo 'This is the page content';
     }
 
     public function getRecentPosts()
