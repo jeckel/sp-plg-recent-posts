@@ -12,10 +12,12 @@ defined('ABSPATH') or die ('No script kiddies please!');
 class WP_Recent_Posts_Shortcode
 {
     const THUMB_SIZE_ALIAS = 'recent-post-thumb';
+    const DEFAULT_WIDTH    = 300;
+    const DEFAULT_HEIGHT   = 150;
 
     protected $config = array(
-        'width'          => 300,
-        'height'         => 150,
+        'width'          => self::DEFAULT_WIDTH,
+        'height'         => self::DEFAULT_HEIGHT,
         'nb_posts'       => 3,
         'excerpt_length' => 100
     );
@@ -23,6 +25,7 @@ class WP_Recent_Posts_Shortcode
     public function register()
     {
         // Support for Featured Images
+        $this->loadOptions();
         add_theme_support('post-thumbnails', array('post'));
         add_image_size(self::THUMB_SIZE_ALIAS, $this->config['width'], $this->config['height'], true);
         add_filter('image_size_names_choose', array($this, 'registerCustomImageSizes'));
@@ -46,7 +49,22 @@ class WP_Recent_Posts_Shortcode
 
     public function adminPage()
     {
+        if($_POST['wprpo_hidden'] == 'Y') {
+            $this->config['width'] = $_POST['wprpo_width'];
+            update_option('wprpo_width', $this->config['width']);
+
+            $this->config['height'] = $_POST['wprpo_height'];
+            update_option('wprpo_height', $this->config['height']);
+
+            echo '<div class="updated"><p><strong>' . _e('Options saved.') . '</strong></p></div>';
+        }
         include __dir__ . "/admin.php";
+    }
+
+    public function loadOptions()
+    {
+        $this->config['width'] = get_option('wprpo_width', self::DEFAULT_WIDTH);
+        $this->config['height'] = get_option('wprpo_height', self::DEFAULT_HEIGHT);
     }
 
     public function getRecentPosts()
