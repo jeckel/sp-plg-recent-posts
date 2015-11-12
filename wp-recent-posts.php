@@ -1,7 +1,12 @@
 <?php
-/*
-Plugin Name: WP Recent Posts Shortcode
-*/
+/**
+ * Plugin Name: WP Recent Posts Shortcode
+ * Plugin URI: https://github.com/jeckel/sp-plg-recent-posts
+ * Description: This plugin is designed to display some recent posts in a more adaptive way
+ * Version: Alpha
+ * Author: Jeckel
+ * Author URI: http://www.jeckel.fr
+ */
 defined('ABSPATH') or die ('No script kiddies please!');
 
 class WP_Recent_Posts_Shortcode
