@@ -9,7 +9,10 @@
  */
 defined('ABSPATH') or die ('No script kiddies please!');
 
-include_once __DIR__ . '/lib/config.php';
+define('WP_RECENT_POSTS_SHORTCODE_PLUGGIN_DIR', __DIR__);
+
+include_once WP_RECENT_POSTS_SHORTCODE_PLUGGIN_DIR . '/lib/config.php';
+include_once WP_RECENT_POSTS_SHORTCODE_PLUGGIN_DIR . '/lib/admin.php';
 
 class WP_Recent_Posts_Shortcode
 {
@@ -32,9 +35,20 @@ class WP_Recent_Posts_Shortcode
         );
         add_filter('image_size_names_choose', array($this, 'registerCustomImageSizes'));
 
-        add_action('admin_menu', array($this, 'adminAction'));
 
         add_shortcode('recent_posts', array($this, 'getRecentPosts'));
+
+        // Add admin menu
+        $config = $this->config;
+        add_action('admin_menu', function() use ($config) {
+            add_options_page(
+                "WP Recent posts",
+                "WP Recent posts",
+                'manage_options',
+                "wp-recent-posts",
+                array(new WP_Recent_Posts_Admin($config), 'adminPage')
+            );
+        });
     }
 
     public function registerCustomImageSizes($sizes)
@@ -42,21 +56,6 @@ class WP_Recent_Posts_Shortcode
         return array_merge($sizes, array(
             WP_Recent_Posts_Config::THUMB_SIZE_ALIAS => __('Recent post thumbnails'),
         ));
-    }
-
-    public function adminAction()
-    {
-        add_options_page("WP Recent posts", "WP Recent posts", 'manage_options', "wp-recent-posts", array($this, 'adminPage'));
-    }
-
-    public function adminPage()
-    {
-        if($_POST['wprpo_hidden'] == 'Y') {
-            $this->config->setWidth($_POST['wprpo_width']);
-            $this->config->setHeight($_POST['wprpo_height']);
-            echo '<div class="updated"><p><strong>' . _e('Options saved.') . '</strong></p></div>';
-        }
-        include __dir__ . "/admin.php";
     }
 
     public function getRecentPosts()
