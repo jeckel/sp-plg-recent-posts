@@ -11,9 +11,9 @@ class WP_Recent_Posts_Renderer
         $this->config = $config;
     }
 
-    public function renderRecentPostsShortcode()
+    public function renderRecentPostsShortcode($atts, $content = '')
     {
-        $posts = $this->loadRecentPosts();
+        $posts = $this->loadRecentPosts($atts);
         $toReturn = '';
         foreach($posts as $post) {
             $toReturn .= $this->renderPost($post);
@@ -21,9 +21,9 @@ class WP_Recent_Posts_Renderer
         return sprintf('<div class="row">%s</div>', $toReturn);
     }
 
-    public function loadRecentPosts()
+    public function loadRecentPosts(array $args = array())
     {
-        $args = array(
+        $default_args = array(
             'numberposts' => $this->config->getNbPosts(),
             'offset'      => 0,
             'category'    => 0,
@@ -32,13 +32,14 @@ class WP_Recent_Posts_Renderer
             'post_status' => 'publish',
             'post_type'   => 'post',
         );
+        $args = shortcode_atts($default_args, $args);
         return wp_get_recent_posts($args, OBJECT);
     }
 
     public function renderPost(WP_Post $post)
     {
         $outputMask = '
-            <div style="width: 400px; float: left; display: block;">
+            <div style="width: %5$s; float: left; display: block;">
                 <div class="recent_post_thumb">
                     <a href="%2$s">%1$s</a>
                 </div>
@@ -52,7 +53,8 @@ class WP_Recent_Posts_Renderer
             $this->renderFeaturedImage($post),
             get_permalink($post),
             $post->post_title,
-            $this->getPostExcerpt($post)
+            $this->getPostExcerpt($post),
+            $this->config->getPostWidth()
         );
         return $output;
     }
@@ -64,7 +66,7 @@ class WP_Recent_Posts_Renderer
         }
 
         $content = strip_shortcodes($post->post_content);
-        $content = substr($content, 0, strpos($content, ' ', $this->config->getExcerptLength())) . ' [..]';
+        $content = substr($content, 0, strpos($content, ' ', $this->config->getExcerptLength())) . '...';
         return $content;
     }
 

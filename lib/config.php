@@ -8,6 +8,7 @@ class WP_Recent_Posts_Config
 
     const FIELD_WIDTH      = 'wprpo_width';
     const FIELD_HEIGHT     = 'wprpo_height';
+    const FIELD_POST_WIDTH = 'wprpo_post_width';
     const FIELD_NBPOSTS    = 'wprpo_nb_posts';
     const FIELD_EXCERPT_LENGHT = 'wprpo_excerpt_lenght';
 
@@ -60,6 +61,21 @@ class WP_Recent_Posts_Config
         $this->height = $height;
         update_option(self::FIELD_HEIGHT, $this->height);
         return $this;
+    }
+
+    public function setPostWidth($width)
+    {
+        $this->post_width = $width;
+        update_option(self::FIELD_POST_WIDTH, $this->post_width);
+        return $this;
+    }
+
+    public function getPostWidth()
+    {
+        if (is_null($this->post_width)) {
+            $this->post_width = get_option(self::FIELD_POST_WIDTH, '300px');
+        }
+        return $this->post_width;
     }
 
     public function setNbPosts($nb_posts)

@@ -22,7 +22,8 @@ class WP_Recent_Posts_Admin
 
     public function saveOptions(array $options)
     {
-            $this->config->setWidth($options['wprpo_width']);
-            $this->config->setHeight($options['wprpo_height']);
+        $this->config->setWidth($options['wprpo_width']);
+        $this->config->setHeight($options['wprpo_height']);
+        $this->config->setPostWidth($options['wprpo_post_width']);
     }
 }
